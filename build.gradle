@@ -1,0 +1,75 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.github.maiflai:gradle-scalatest:0.4'
+    }
+}
+
+apply plugin: 'scala'
+apply plugin: 'maven'
+apply plugin: 'scalatest'
+
+group = 'apsu'
+version = '1.0-SNAPSHOT'
+
+ext {
+  scalaMajorVersion = '2.10'
+  scalaVersion = "${scalaMajorVersion}.3"
+}
+
+repositories {
+  mavenCentral()
+  mavenLocal()
+  maven {
+    url 'http://repo.typesafe.com/typesafe/repo'
+  }
+}
+
+dependencies {
+
+  // ------------------------------------------------------------
+  // Platform
+
+  compile "org.scala-lang:scala-library:${scalaVersion}"
+  compile "org.scala-lang:scala-reflect:${scalaVersion}"
+
+  // ------------------------------------------------------------
+  // Testing
+
+  testCompile "org.scalatest:scalatest_${scalaMajorVersion}:2.0"
+  testCompile 'junit:junit:4.11'
+  testCompile 'org.mockito:mockito-core:1.9.5'
+
+  testRuntime 'org.pegdown:pegdown:1.1.0'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.0'
+}
+
+compileScala {
+    scalaCompileOptions.fork = true
+    scalaCompileOptions.forkOptions.jvmArgs = ['-XX:MaxPermSize=512m']
+    scalaCompileOptions.additionalParameters = [
+            "-feature",
+            "-language:reflectiveCalls", // used for config structural typing
+            "-language:postfixOps"
+    ]
+}
+
+//test {
+//  jvmArgs '-XX:MaxPermSize=512m'
+//  ant.taskdef(name: 'scalatest',
+//      classname: 'org.scalatest.tools.ScalaTestAntTask',
+//      classpath: sourceSets.test.runtimeClasspath.asPath
+//  )
+//  ant.scalatest(runpath: sourceSets.test.output.classesDir,
+//      haltonfailure: 'true',
+//      fork: 'false') {
+//    reporter(type: 'junitxml', directory: 'test-reports')
+//    reporter(type: 'stderr')
+//    if (System.properties.test) suite(classname: System.properties.test)
+//  }
+//}
