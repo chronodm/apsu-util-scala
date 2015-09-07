@@ -6,7 +6,7 @@ class EnumRegistry[E <: EnumLike[E]] {
 
   private val nameRegistry = mutable.OpenHashMap[String, E]()
 
-  def register(e: E) {
+  def register(e: E): Unit = {
     nameRegistry.get(e.name) match {
       case Some(e2) => throw new IllegalArgumentException(s"Can't register $e; ${e.name} already exists: $e2")
       case _ => nameRegistry(e.name) = e
